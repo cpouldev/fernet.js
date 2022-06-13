@@ -141,7 +141,7 @@ var fernet = function fernet(opts) {
 exports = module.exports = fernet;
 fernet.call(exports)
 
-},{"./lib/secret":2,"./lib/token":3,"__browserify_Buffer":29,"crypto":11,"crypto-js/aes":16,"crypto-js/core":18,"crypto-js/enc-base64":19,"crypto-js/enc-hex":20,"crypto-js/enc-latin1":21,"crypto-js/enc-utf8":22,"crypto-js/hmac-sha256":24,"urlsafe-base64":31}],2:[function(require,module,exports){
+},{"./lib/secret":2,"./lib/token":3,"__browserify_Buffer":30,"crypto":12,"crypto-js/aes":17,"crypto-js/core":19,"crypto-js/enc-base64":20,"crypto-js/enc-hex":21,"crypto-js/enc-latin1":22,"crypto-js/enc-utf8":23,"crypto-js/hmac-sha256":25,"urlsafe-base64":32}],2:[function(require,module,exports){
 var f = require('../fernet');
 
 var Secret = function (secret64) {
@@ -851,7 +851,7 @@ EventEmitter.listenerCount = function(emitter, type) {
   return ret;
 };
 
-},{"__browserify_process":30}],7:[function(require,module,exports){
+},{"__browserify_process":31}],7:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -2368,6 +2368,8 @@ Buffer.prototype.writeDoubleBE = function(value, offset, noAssert) {
 };
 
 },{"./buffer_ieee754":8,"assert":5,"base64-js":4}],10:[function(require,module,exports){
+
+},{}],11:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
 var zeroBuffer = new Buffer(intSize); zeroBuffer.fill(0);
@@ -2404,7 +2406,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 
 module.exports = { hash: hash };
 
-},{"buffer":9}],11:[function(require,module,exports){
+},{"buffer":9}],12:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 var sha = require('./sha')
 var sha256 = require('./sha256')
@@ -2503,7 +2505,7 @@ each(['createCredentials'
   }
 })
 
-},{"./md5":12,"./rng":13,"./sha":14,"./sha256":15,"buffer":9}],12:[function(require,module,exports){
+},{"./md5":13,"./rng":14,"./sha":15,"./sha256":16,"buffer":9}],13:[function(require,module,exports){
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -2668,7 +2670,7 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 
-},{"./helpers":10}],13:[function(require,module,exports){
+},{"./helpers":11}],14:[function(require,module,exports){
 // Original code adapted from Robert Kieffer.
 // details at https://github.com/broofa/node-uuid
 (function() {
@@ -2701,7 +2703,7 @@ module.exports = function md5(buf) {
 
 }())
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -2804,7 +2806,7 @@ module.exports = function sha1(buf) {
   return helpers.hash(buf, core_sha1, 20, true);
 };
 
-},{"./helpers":10}],15:[function(require,module,exports){
+},{"./helpers":11}],16:[function(require,module,exports){
 
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -2885,7 +2887,7 @@ module.exports = function sha256(buf) {
   return helpers.hash(buf, core_sha256, 32, true);
 };
 
-},{"./helpers":10}],16:[function(require,module,exports){
+},{"./helpers":11}],17:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -2979,6 +2981,8 @@ module.exports = function sha256(buf) {
 	     */
 	    var AES = C_algo.AES = BlockCipher.extend({
 	        _doReset: function () {
+	            var t;
+
 	            // Skip reset of nRounds has been set before and key did not change
 	            if (this._nRounds && this._keyPriorReset === this._key) {
 	                return;
@@ -3001,7 +3005,7 @@ module.exports = function sha256(buf) {
 	                if (ksRow < keySize) {
 	                    keySchedule[ksRow] = keyWords[ksRow];
 	                } else {
-	                    var t = keySchedule[ksRow - 1];
+	                    t = keySchedule[ksRow - 1];
 
 	                    if (!(ksRow % keySize)) {
 	                        // Rot word
@@ -3118,15 +3122,15 @@ module.exports = function sha256(buf) {
 	return CryptoJS.AES;
 
 }));
-},{"./cipher-core":17,"./core":18,"./enc-base64":19,"./evpkdf":23,"./md5":26}],17:[function(require,module,exports){
-;(function (root, factory) {
+},{"./cipher-core":18,"./core":19,"./enc-base64":20,"./evpkdf":24,"./md5":27}],18:[function(require,module,exports){
+;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
-		module.exports = exports = factory(require("./core"));
+		module.exports = exports = factory(require("./core"), require("./evpkdf"));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
-		define(["./core"], factory);
+		define(["./core", "./evpkdf"], factory);
 	}
 	else {
 		// Global (browser)
@@ -3472,17 +3476,19 @@ module.exports = function sha256(buf) {
 	        });
 
 	        function xorBlock(words, offset, blockSize) {
+	            var block;
+
 	            // Shortcut
 	            var iv = this._iv;
 
 	            // Choose mixing block
 	            if (iv) {
-	                var block = iv;
+	                block = iv;
 
 	                // Remove IV for subsequent blocks
 	                this._iv = undefined;
 	            } else {
-	                var block = this._prevBlock;
+	                block = this._prevBlock;
 	            }
 
 	            // XOR blocks
@@ -3574,6 +3580,8 @@ module.exports = function sha256(buf) {
 	        }),
 
 	        reset: function () {
+	            var modeCreator;
+
 	            // Reset cipher
 	            Cipher.reset.call(this);
 
@@ -3584,14 +3592,19 @@ module.exports = function sha256(buf) {
 
 	            // Reset block mode
 	            if (this._xformMode == this._ENC_XFORM_MODE) {
-	                var modeCreator = mode.createEncryptor;
+	                modeCreator = mode.createEncryptor;
 	            } else /* if (this._xformMode == this._DEC_XFORM_MODE) */ {
-	                var modeCreator = mode.createDecryptor;
-
+	                modeCreator = mode.createDecryptor;
 	                // Keep at least one block in the buffer for unpadding
 	                this._minBufferSize = 1;
 	            }
-	            this._mode = modeCreator.call(mode, this, iv && iv.words);
+
+	            if (this._mode && this._mode.__creator == modeCreator) {
+	                this._mode.init(this, iv && iv.words);
+	            } else {
+	                this._mode = modeCreator.call(mode, this, iv && iv.words);
+	                this._mode.__creator = modeCreator;
+	            }
 	        },
 
 	        _doProcessBlock: function (words, offset) {
@@ -3599,6 +3612,8 @@ module.exports = function sha256(buf) {
 	        },
 
 	        _doFinalize: function () {
+	            var finalProcessedBlocks;
+
 	            // Shortcut
 	            var padding = this.cfg.padding;
 
@@ -3608,10 +3623,10 @@ module.exports = function sha256(buf) {
 	                padding.pad(this._data, this.blockSize);
 
 	                // Process final blocks
-	                var finalProcessedBlocks = this._process(!!'flush');
+	                finalProcessedBlocks = this._process(!!'flush');
 	            } else /* if (this._xformMode == this._DEC_XFORM_MODE) */ {
 	                // Process final blocks
-	                var finalProcessedBlocks = this._process(!!'flush');
+	                finalProcessedBlocks = this._process(!!'flush');
 
 	                // Unpad data
 	                padding.unpad(finalProcessedBlocks);
@@ -3703,15 +3718,17 @@ module.exports = function sha256(buf) {
 	         *     var openSSLString = CryptoJS.format.OpenSSL.stringify(cipherParams);
 	         */
 	        stringify: function (cipherParams) {
+	            var wordArray;
+
 	            // Shortcuts
 	            var ciphertext = cipherParams.ciphertext;
 	            var salt = cipherParams.salt;
 
 	            // Format
 	            if (salt) {
-	                var wordArray = WordArray.create([0x53616c74, 0x65645f5f]).concat(salt).concat(ciphertext);
+	                wordArray = WordArray.create([0x53616c74, 0x65645f5f]).concat(salt).concat(ciphertext);
 	            } else {
-	                var wordArray = ciphertext;
+	                wordArray = ciphertext;
 	            }
 
 	            return wordArray.toString(Base64);
@@ -3731,6 +3748,8 @@ module.exports = function sha256(buf) {
 	         *     var cipherParams = CryptoJS.format.OpenSSL.parse(openSSLString);
 	         */
 	        parse: function (openSSLStr) {
+	            var salt;
+
 	            // Parse base64
 	            var ciphertext = Base64.parse(openSSLStr);
 
@@ -3740,7 +3759,7 @@ module.exports = function sha256(buf) {
 	            // Test for salt
 	            if (ciphertextWords[0] == 0x53616c74 && ciphertextWords[1] == 0x65645f5f) {
 	                // Extract salt
-	                var salt = WordArray.create(ciphertextWords.slice(2, 4));
+	                salt = WordArray.create(ciphertextWords.slice(2, 4));
 
 	                // Remove salt from ciphertext
 	                ciphertextWords.splice(0, 4);
@@ -3994,8 +4013,8 @@ module.exports = function sha256(buf) {
 
 
 }));
-},{"./core":18}],18:[function(require,module,exports){
-;(function (root, factory) {
+},{"./core":19,"./evpkdf":24}],19:[function(require,module,exports){
+var global=self;;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
 		module.exports = exports = factory();
@@ -4010,15 +4029,78 @@ module.exports = function sha256(buf) {
 	}
 }(this, function () {
 
+	/*globals window, global, require*/
+
 	/**
 	 * CryptoJS core components.
 	 */
 	var CryptoJS = CryptoJS || (function (Math, undefined) {
+
+	    var crypto;
+
+	    // Native crypto from window (Browser)
+	    if (typeof window !== 'undefined' && window.crypto) {
+	        crypto = window.crypto;
+	    }
+
+	    // Native crypto in web worker (Browser)
+	    if (typeof self !== 'undefined' && self.crypto) {
+	        crypto = self.crypto;
+	    }
+
+	    // Native crypto from worker
+	    if (typeof globalThis !== 'undefined' && globalThis.crypto) {
+	        crypto = globalThis.crypto;
+	    }
+
+	    // Native (experimental IE 11) crypto from window (Browser)
+	    if (!crypto && typeof window !== 'undefined' && window.msCrypto) {
+	        crypto = window.msCrypto;
+	    }
+
+	    // Native crypto from global (NodeJS)
+	    if (!crypto && typeof global !== 'undefined' && global.crypto) {
+	        crypto = global.crypto;
+	    }
+
+	    // Native crypto import via require (NodeJS)
+	    if (!crypto && typeof require === 'function') {
+	        try {
+	            crypto = require('crypto');
+	        } catch (err) {}
+	    }
+
 	    /*
-	     * Local polyfil of Object.create
+	     * Cryptographically secure pseudorandom number generator
+	     *
+	     * As Math.random() is cryptographically not safe to use
+	     */
+	    var cryptoSecureRandomInt = function () {
+	        if (crypto) {
+	            // Use getRandomValues method (Browser)
+	            if (typeof crypto.getRandomValues === 'function') {
+	                try {
+	                    return crypto.getRandomValues(new Uint32Array(1))[0];
+	                } catch (err) {}
+	            }
+
+	            // Use randomBytes method (NodeJS)
+	            if (typeof crypto.randomBytes === 'function') {
+	                try {
+	                    return crypto.randomBytes(4).readInt32LE();
+	                } catch (err) {}
+	            }
+	        }
+
+	        throw new Error('Native crypto module could not be used to get secure random number.');
+	    };
+
+	    /*
+	     * Local polyfill of Object.create
+
 	     */
 	    var create = Object.create || (function () {
-	        function F() {};
+	        function F() {}
 
 	        return function (obj) {
 	            var subtype;
@@ -4031,7 +4113,7 @@ module.exports = function sha256(buf) {
 
 	            return subtype;
 	        };
-	    }())
+	    }());
 
 	    /**
 	     * CryptoJS namespace.
@@ -4242,8 +4324,8 @@ module.exports = function sha256(buf) {
 	                }
 	            } else {
 	                // Copy one word at a time
-	                for (var i = 0; i < thatSigBytes; i += 4) {
-	                    thisWords[(thisSigBytes + i) >>> 2] = thatWords[i >>> 2];
+	                for (var j = 0; j < thatSigBytes; j += 4) {
+	                    thisWords[(thisSigBytes + j) >>> 2] = thatWords[j >>> 2];
 	                }
 	            }
 	            this.sigBytes += thatSigBytes;
@@ -4301,26 +4383,8 @@ module.exports = function sha256(buf) {
 	        random: function (nBytes) {
 	            var words = [];
 
-	            var r = (function (m_w) {
-	                var m_w = m_w;
-	                var m_z = 0x3ade68b1;
-	                var mask = 0xffffffff;
-
-	                return function () {
-	                    m_z = (0x9069 * (m_z & 0xFFFF) + (m_z >> 0x10)) & mask;
-	                    m_w = (0x4650 * (m_w & 0xFFFF) + (m_w >> 0x10)) & mask;
-	                    var result = ((m_z << 0x10) + m_w) & mask;
-	                    result /= 0x100000000;
-	                    result += 0.5;
-	                    return result * (Math.random() > .5 ? 1 : -1);
-	                }
-	            });
-
-	            for (var i = 0, rcache; i < nBytes; i += 4) {
-	                var _r = r((rcache || Math.random()) * 0x100000000);
-
-	                rcache = _r() * 0x3ade67b7;
-	                words.push((_r() * 0x100000000) | 0);
+	            for (var i = 0; i < nBytes; i += 4) {
+	                words.push(cryptoSecureRandomInt());
 	            }
 
 	            return new WordArray.init(words, nBytes);
@@ -4551,6 +4615,8 @@ module.exports = function sha256(buf) {
 	         *     var processedData = bufferedBlockAlgorithm._process(!!'flush');
 	         */
 	        _process: function (doFlush) {
+	            var processedWords;
+
 	            // Shortcuts
 	            var data = this._data;
 	            var dataWords = data.words;
@@ -4583,7 +4649,7 @@ module.exports = function sha256(buf) {
 	                }
 
 	                // Remove processed words
-	                var processedWords = dataWords.splice(0, nWordsReady);
+	                processedWords = dataWords.splice(0, nWordsReady);
 	                data.sigBytes -= nBytesReady;
 	            }
 
@@ -4755,7 +4821,7 @@ module.exports = function sha256(buf) {
 	return CryptoJS;
 
 }));
-},{}],19:[function(require,module,exports){
+},{"crypto":10}],20:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4879,7 +4945,8 @@ module.exports = function sha256(buf) {
 	          if (i % 4) {
 	              var bits1 = reverseMap[base64Str.charCodeAt(i - 1)] << ((i % 4) * 2);
 	              var bits2 = reverseMap[base64Str.charCodeAt(i)] >>> (6 - (i % 4) * 2);
-	              words[nBytes >>> 2] |= (bits1 | bits2) << (24 - (nBytes % 4) * 8);
+	              var bitsCombined = bits1 | bits2;
+	              words[nBytes >>> 2] |= bitsCombined << (24 - (nBytes % 4) * 8);
 	              nBytes++;
 	          }
 	      }
@@ -4891,7 +4958,7 @@ module.exports = function sha256(buf) {
 	return CryptoJS.enc.Base64;
 
 }));
-},{"./core":18}],20:[function(require,module,exports){
+},{"./core":19}],21:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4910,7 +4977,7 @@ module.exports = function sha256(buf) {
 	return CryptoJS.enc.Hex;
 
 }));
-},{"./core":18}],21:[function(require,module,exports){
+},{"./core":19}],22:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4929,7 +4996,7 @@ module.exports = function sha256(buf) {
 	return CryptoJS.enc.Latin1;
 
 }));
-},{"./core":18}],22:[function(require,module,exports){
+},{"./core":19}],23:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4948,7 +5015,7 @@ module.exports = function sha256(buf) {
 	return CryptoJS.enc.Utf8;
 
 }));
-},{"./core":18}],23:[function(require,module,exports){
+},{"./core":19}],24:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5019,6 +5086,8 @@ module.exports = function sha256(buf) {
 	         *     var key = kdf.compute(password, salt);
 	         */
 	        compute: function (password, salt) {
+	            var block;
+
 	            // Shortcut
 	            var cfg = this.cfg;
 
@@ -5038,7 +5107,7 @@ module.exports = function sha256(buf) {
 	                if (block) {
 	                    hasher.update(block);
 	                }
-	                var block = hasher.update(password).finalize(salt);
+	                block = hasher.update(password).finalize(salt);
 	                hasher.reset();
 
 	                // Iterations
@@ -5081,7 +5150,7 @@ module.exports = function sha256(buf) {
 	return CryptoJS.EvpKDF;
 
 }));
-},{"./core":18,"./hmac":25,"./sha1":27}],24:[function(require,module,exports){
+},{"./core":19,"./hmac":26,"./sha1":28}],25:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5100,7 +5169,7 @@ module.exports = function sha256(buf) {
 	return CryptoJS.HmacSHA256;
 
 }));
-},{"./core":18,"./hmac":25,"./sha256":28}],25:[function(require,module,exports){
+},{"./core":19,"./hmac":26,"./sha256":29}],26:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5244,7 +5313,7 @@ module.exports = function sha256(buf) {
 
 
 }));
-},{"./core":18}],26:[function(require,module,exports){
+},{"./core":19}],27:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5513,7 +5582,7 @@ module.exports = function sha256(buf) {
 	return CryptoJS.MD5;
 
 }));
-},{"./core":18}],27:[function(require,module,exports){
+},{"./core":19}],28:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5664,7 +5733,7 @@ module.exports = function sha256(buf) {
 	return CryptoJS.SHA1;
 
 }));
-},{"./core":18}],28:[function(require,module,exports){
+},{"./core":19}],29:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5864,7 +5933,7 @@ module.exports = function sha256(buf) {
 	return CryptoJS.SHA256;
 
 }));
-},{"./core":18}],29:[function(require,module,exports){
+},{"./core":19}],30:[function(require,module,exports){
 require=(function(e,t,n,r){function i(r){if(!n[r]){if(!t[r]){if(e)return e(r);throw new Error("Cannot find module '"+r+"'")}var s=n[r]={exports:{}};t[r][0](function(e){var n=t[r][1][e];return i(n?n:e)},s,s.exports)}return n[r].exports}for(var s=0;s<r.length;s++)i(r[s]);return i})(typeof require!=="undefined"&&require,{1:[function(require,module,exports){
 // UTILITY
 var util = require('util');
@@ -9726,7 +9795,7 @@ SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 },{}]},{},[])
 ;;module.exports=require("buffer-browserify")
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -9781,10 +9850,10 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 
 module.exports = require('./lib/urlsafe-base64');
-},{"./lib/urlsafe-base64":32}],32:[function(require,module,exports){
+},{"./lib/urlsafe-base64":33}],33:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer").Buffer;/*!
  * urlsafe-base64
  */
@@ -9862,7 +9931,7 @@ exports.validate = function validate(base64) {
   return /^[A-Za-z0-9\-_]+$/.test(base64);
 
 };
-},{"__browserify_Buffer":29}]},{},[1])
+},{"__browserify_Buffer":30}]},{},[1])
 (1)
 });
 ;
